@@ -15,6 +15,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/data/utils/maputil"
 	"github.com/prometheus/prometheus/promql/parser"
 
+	common "github.com/grafana/grafana/pkg/apimachinery/apis/common/v0alpha1"
 	"github.com/grafana/grafana/pkg/promlib/client"
 	"github.com/grafana/grafana/pkg/promlib/models"
 	"github.com/grafana/grafana/pkg/promlib/utils"
@@ -116,8 +117,8 @@ type SuggestionRequest struct {
 
 	Queries []string `json:"queries"`
 
-	Scopes       []models.ScopeFilter `json:"scopes"`
-	AdhocFilters []models.ScopeFilter `json:"adhocFilters"`
+	Scopes       []common.ScopeFilter `json:"scopes"`
+	AdhocFilters []common.ScopeFilter `json:"adhocFilters"`
 
 	// Start and End are proxied directly to the prometheus endpoint (which is rfc3339 | unix_timestamp)
 	Start string `json:"start"`

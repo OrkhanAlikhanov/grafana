@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/grafana/pkg/promlib/models"
+	common "github.com/grafana/grafana/pkg/apimachinery/apis/common/v0alpha1"
 	"github.com/grafana/grafana/pkg/promlib/resource"
 )
 
@@ -151,11 +151,11 @@ func TestResource_GetSuggestionsWithEmptyQueriesButFilters(t *testing.T) {
 	// Create a request with empty queries but with filters
 	suggestionReq := resource.SuggestionRequest{
 		Queries: []string{}, // Empty queries
-		Scopes: []models.ScopeFilter{
-			{Key: "job", Operator: models.FilterOperatorEquals, Value: "testjob"},
+		Scopes: []common.ScopeFilter{
+			{Key: "job", Operator: common.FilterOperatorEquals, Value: "testjob"},
 		},
-		AdhocFilters: []models.ScopeFilter{
-			{Key: "instance", Operator: models.FilterOperatorEquals, Value: "localhost:9090"},
+		AdhocFilters: []common.ScopeFilter{
+			{Key: "instance", Operator: common.FilterOperatorEquals, Value: "localhost:9090"},
 		},
 	}
 

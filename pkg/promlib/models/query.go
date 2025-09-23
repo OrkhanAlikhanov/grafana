@@ -15,6 +15,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
+	common "github.com/grafana/grafana/pkg/apimachinery/apis/common/v0alpha1"
 	"github.com/grafana/grafana/pkg/promlib/intervalv2"
 )
 
@@ -66,48 +67,20 @@ type PrometheusQueryProperties struct {
 	LegendFormat string `json:"legendFormat,omitempty"`
 
 	// A set of filters applied to apply to the query
-	Scopes []ScopeSpec `json:"scopes,omitempty"`
+	Scopes []NamedScopeSpec `json:"scopes,omitempty"`
 
 	// Additional Ad-hoc filters that take precedence over Scope on conflict.
-	AdhocFilters []ScopeFilter `json:"adhocFilters,omitempty"`
+	AdhocFilters []common.ScopeFilter `json:"adhocFilters,omitempty"`
 
 	// Group By parameters to apply to aggregate expressions in the query
 	GroupByKeys []string `json:"groupByKeys,omitempty"`
 }
 
-// ScopeSpec is a hand copy of the ScopeSpec struct from pkg/apis/scope/v0alpha1/types.go
-// to avoid import (temp fix). This also has metadata.name inlined.
-type ScopeSpec struct {
-	Name        string        `json:"name"` // This is the identifier from metadata.name of the scope model.
-	Title       string        `json:"title"`
-	Type        string        `json:"type"`
-	Description string        `json:"description"`
-	Category    string        `json:"category"`
-	Filters     []ScopeFilter `json:"filters"`
+// NamedScopeSpec embeds a common.ScopeSpec and adds a Name field that comes from the metadata.name.
+type NamedScopeSpec struct {
+	Name string `json:"name"` // This is the identifier from metadata.name of the scope model.
+	common.ScopeSpec
 }
-
-// ScopeFilter is a hand copy of the ScopeFilter struct from pkg/apis/scope/v0alpha1/types.go
-// to avoid import (temp fix)
-type ScopeFilter struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-	// Values is used for operators that require multiple values (e.g. one-of and not-one-of).
-	Values   []string       `json:"values,omitempty"`
-	Operator FilterOperator `json:"operator"`
-}
-
-// FilterOperator is a hand copy of the ScopeFilter struct from pkg/apis/scope/v0alpha1/types.go
-type FilterOperator string
-
-// Hand copy of enum from pkg/apis/scope/v0alpha1/types.go
-const (
-	FilterOperatorEquals        FilterOperator = "equals"
-	FilterOperatorNotEquals     FilterOperator = "not-equals"
-	FilterOperatorRegexMatch    FilterOperator = "regex-match"
-	FilterOperatorRegexNotMatch FilterOperator = "regex-not-match"
-	FilterOperatorOneOf         FilterOperator = "one-of"
-	FilterOperatorNotOneOf      FilterOperator = "not-one-of"
-)
 
 // Internal interval and range variables
 const (
@@ -175,7 +148,7 @@ type Query struct {
 	ExemplarQuery bool
 	UtcOffsetSec  int64
 
-	Scopes []ScopeSpec
+	Scopes []NamedScopeSpec
 }
 
 // This internal query struct is just like QueryModel, except it does not include:
@@ -217,7 +190,7 @@ func Parse(span trace.Span, query backend.DataQuery, dsScrapeInterval string, in
 	)
 
 	if enableScope {
-		var scopeFilters []ScopeFilter
+		var scopeFilters []common.ScopeFilter
 		for _, scope := range model.Scopes {
 			scopeFilters = append(scopeFilters, scope.Filters...)
 		}

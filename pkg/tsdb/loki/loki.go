@@ -13,6 +13,7 @@ import (
 	"github.com/grafana/dskit/concurrency"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
@@ -20,9 +21,7 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
-
-	"github.com/grafana/grafana/pkg/promlib/models"
+	common "github.com/grafana/grafana/pkg/apimachinery/apis/common/v0alpha1"
 	"github.com/grafana/grafana/pkg/tsdb/loki/kinds/dataquery"
 )
 
@@ -75,7 +74,7 @@ type QueryJSONModel struct {
 	dataquery.LokiDataQuery
 	Direction           *string              `json:"direction,omitempty"`
 	SupportingQueryType *string              `json:"supportingQueryType"`
-	Scopes              []models.ScopeFilter `json:"scopes"`
+	Scopes              []common.ScopeFilter `json:"scopes"`
 }
 
 type ResponseOpts struct {
