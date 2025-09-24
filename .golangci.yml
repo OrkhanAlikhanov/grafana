@@ -92,6 +92,7 @@ linters:
             - pkg: github.com/grafana/grafana/pkg
               desc: apps/secret is not allowed to import grafana core
         coreplugins:
+          list-mode: lax
           files:
             - '**/pkg/tsdb/grafana-pyroscope-datasource/*'
             - '**/pkg/tsdb/grafana-pyroscope-datasource/**/*'
@@ -117,6 +118,8 @@ linters:
             - '**/pkg/tsdb/zipkin/**/*'
             - '**/pkg/tsdb/jaeger/*'
             - '**/pkg/tsdb/jaeger/**/*'
+          allow:
+            - github.com/grafana/grafana/pkg/apimachinery
           deny:
             - pkg: github.com/grafana/grafana/pkg/api
               desc: Core plugins are not allowed to depend on Grafana core packages
